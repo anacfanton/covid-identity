@@ -9,26 +9,15 @@ library(ggpubr)
 library(rstanarm)
 library(remotes)
 library(easystats)
+library(tidyr)
+library(ggridges)
 
 # load data
 survey <- read.csv('dataclean_Nov2.csv', header = TRUE)
-# drawing <- read.csv('drawing.csv', header = TRUE)
 
-# giftcard drawing. This is too much responsibility!
-# do this live next week during Agraphia
-#drawing[sample(nrow(drawing), 2), ]
 
 # replace empty cells with NA
-# replace empty cells with NA
-# survey <- survey %>% mutate_all(na_if,"")
-
-# ## define a helper function
-# empty_as_na <- function(x){
-#   if("factor" %in% class(x)) x <- as.character(x) ## since ifelse wont work with factors
-#   ifelse(as.character(x)!="", x, NA)
-# }
-
-## transform all columns
+# transform all columns
 survey <- survey %>% mutate_each(funs(empty_as_na)) 
 
 # convert columns from character to factor
@@ -60,9 +49,6 @@ grads <- subset(survey, is.na(survey$postdoc_yrs))
 postdocs <- subset(survey, !is.na(survey$postdoc_yrs))
 
 # career interests ----
-library(tidyr)
-library(ggridges)
-
 # make a career database
 grads2 <- gather(grads[,c(11:17)], factor_key=TRUE)
 postdocs2 <- gather(postdocs[,c(11:17)], factor_key = TRUE)
@@ -94,14 +80,21 @@ survey %>%
 # colored by density function
 all_career <- ggplot(aes(x = value, y = key, fill = 0.5-abs(0.5-stat(ecdf))), data = survey2) +
   stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = TRUE) +
-  scale_fill_viridis_c(name = "Tail probability", direction = -1) +
+  scale_fill_gradientn(name = "Tail probability",
+                         colours = c("#405364","#585b74","#6c5b7b","#966480","#c6798f", "#df858e", "#eda09c"),
+                         values = c(1, 0.83, 0.66, 0.49, 0.32, 0.15, 0)) +
   theme_classic(base_size = 14) +
   xlim(0,10) +
   theme(panel.border = element_rect(fill = NA, size = 1),
         axis.line = element_blank()) +
-  scale_fill_viridis_c(name = "Tail probability", direction = -1) +
+  #scale_fill_viridis_c(name = "Tail probability", direction = -1) +
   ylab("Career path") +
-  xlab("Interest level") 
+  xlab("Interest level") +
+  scale_y_discrete(labels = c('Teaching','R2 or R3',
+                              'R1', 'Government',
+                              'Industry or Data Science',
+                              'Communication',
+                              'NGO'))
 
 
 grad_career <- ggplot(aes(x = value, y = key, fill = 0.5-abs(0.5-stat(ecdf))), data = grads2) +
