@@ -145,25 +145,31 @@ survey %>%
 
 # First_gen n = 272, grad = 194 respondents, postdoc = 78
 survey %>%
-  group_by(stage, first_gen) %>%
+  group_by(first_gen) %>%
   summarize(n())
 
 # 193 grads, 140 female, 47 male, 6 non-binary-thirdgender/other
 # 76 postdocs, 46 female, 28 male, 2 other
 survey %>%
-  group_by(stage, gender_identity) %>%
+  group_by(gender_identity) %>%
   summarize(n())
 
 # disability or health issue
 # n = 193 grads, n = 77 postdocs
 survey %>%
-  group_by(stage, condition) %>%
+  group_by(condition) %>%
   summarize(n())
 
 # first language English
 # n = 199 grads, n = 78 postdocs
 survey %>%
-  group_by(stage, first_language_english) %>%
+  group_by(first_language_english) %>%
+  summarize(n())
+
+# BIPOC
+# n = 360, 53 = yes, 307 = no
+survey %>%
+  group_by(BIPOC) %>%
   summarize(n())
 
 
