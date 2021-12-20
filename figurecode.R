@@ -2,7 +2,6 @@
 library(ggplot2) 
 library(viridis)
 library(RColorBrewer)
-library(wordcloud2)
 library(tm)
 library(dplyr)
 library(ggpubr)
@@ -83,7 +82,7 @@ all_career <- ggplot(aes(x = value, y = key, fill = 0.5-abs(0.5-stat(ecdf))), da
   scale_fill_gradientn(name = "Tail probability",
                          colours = c("#405364","#585b74","#6c5b7b","#966480","#c6798f", "#df858e", "#eda09c"),
                          values = c(1, 0.83, 0.66, 0.49, 0.32, 0.15, 0)) +
-  theme_classic(base_size = 14) +
+  theme_classic(base_size = 16) +
   xlim(0,10) +
   theme(panel.border = element_rect(fill = NA, size = 1),
         axis.line = element_blank()) +
