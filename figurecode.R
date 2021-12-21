@@ -10,6 +10,7 @@ library(remotes)
 library(easystats)
 library(tidyr)
 library(ggridges)
+library(glue)
 
 # load data
 survey <- read.csv('dataclean_Nov2.csv', header = TRUE)
@@ -94,6 +95,8 @@ all_career <- ggplot(aes(x = value, y = key, fill = 0.5-abs(0.5-stat(ecdf))), da
                               'Industry or Data Science',
                               'Communication',
                               'NGO'))
+
+ggsave(all_career, filename = glue("figures/career_interest_figure_{Sys.Date()}.png"), width = 7, height = 5, dpi=300)
 
 
 grad_career <- ggplot(aes(x = value, y = key, fill = 0.5-abs(0.5-stat(ecdf))), data = grads2) +
