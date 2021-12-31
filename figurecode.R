@@ -67,15 +67,6 @@ postdocs2 %>% dplyr::group_by(key)%>%
 
 
 
-# rename columns
-survey %>% 
-  rename(
-    Teaching = career_teaching,
-    R2_R3 = career_R2_R3,
-    R1 = career_R1,
-    Industry/Business = career_industry_datascience,
-    Communication/Extension = career_communication
-  )
 
 # colored by density function
 all_career <- ggplot(aes(x = value, y = key, fill = 0.5-abs(0.5-stat(ecdf))), data = survey2) +
