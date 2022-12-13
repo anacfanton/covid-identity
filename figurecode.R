@@ -319,7 +319,7 @@ multreg_plot <- mcmc_intervals(
         'Chronic condition',
         'BIPOC',
         'Female-identifying',
-        'First generation college',
+        'First-generation',
         'Postdoc training (yrs)',
         'Graduate training (yrs)'
       )
@@ -339,6 +339,11 @@ ggsave(multreg_plot, filename = "figures/postdocmulti.png", dpi = 300, width = 5
 # postdoc multiple regression
 
 posterior2 <- as.matrix(model_bayes2)
+
+label_wrap <- function(variable, value) {
+  lapply(strwrap(as.character(value), width=10, simplify=FALSE), 
+         paste, collapse="\n")
+}
 
 multreggrad_plot <- bayesplot::mcmc_intervals(
   posterior2,
@@ -365,7 +370,7 @@ multreggrad_plot <- bayesplot::mcmc_intervals(
       'Chronic condition',
       'BIPOC',
       'Female-identifying',
-      'First generation college',
+      'First-generation',
       'Graduate training (yrs)'
     )) +
   xlab("Effect on total publications") +
