@@ -318,7 +318,7 @@ multreg_plot <- mcmc_intervals(
         'ESL',
         'Chronic condition',
         'BIPOC',
-        'Female-identifying',
+        'Female',
         'First-generation',
         'Postdoc training (yrs)',
         'Graduate training (yrs)'
@@ -369,7 +369,7 @@ multreggrad_plot <- bayesplot::mcmc_intervals(
       'ESL',
       'Chronic condition',
       'BIPOC',
-      'Female-identifying',
+      'Female',
       'First-generation',
       'Graduate training (yrs)'
     )) +
@@ -401,33 +401,6 @@ identitymulti <- ggarrange(
 print(identitymulti) 
 ggsave(filename = "figures/identitymulti.png", dpi = 300, height = 8, width = 12)
 
-summary(model_bayes, digits = 2)
-posteriors <- describe_posterior(model_bayes)
-# for a nicer table
-print_md(posteriors, digits = 2)
-
-posterior <- as.matrix(model_bayes)
-
-plot_title <- ggtitle("Posterior distributions",
-                      "with medians and 80% intervals")
-mcmc_areas(posterior,
-           pars = c("graduate_yrs", 
-                    "postdoc_yrs",
-                    "first_genYes", 
-                    "gender_identityMale", 
-                    "gender_identityNon-binary/third gender/other",
-                    "BIPOCYes", 
-                    "conditionYes", 
-                    "first_language_englishYes"),
-           prob = 0.8) + plot_title
-
-mcmc_intervals(posterior, pars = c("graduate_yrs", 
-                                   "postdoc_yrs", 
-                                   "first_genYes", 
-                                   "male", 
-                                   "BIPOCYes", 
-                                   "conditionYes", 
-                                   "ESL"))
 
 
 # relationship between COVID and identity ----
@@ -437,27 +410,28 @@ mcmc_intervals(posterior, pars = c("graduate_yrs",
 grads$COVIDimpact <- ifelse(grads$COVID_impact_writing == "Yes", 1, 0)
 grads$female <- ifelse(grads$male == 1, 0, 1)
 
-model_bayes <- stan_glm(COVIDimpact ~ 
+model_bayes4 <- stan_glm(COVIDimpact ~ 
                           graduate_yrs +
                           firstgen +
                           female +
                           BIPOC +
                           condition +
                           ESL,
-                          family = binomial,
+                          family = binomial(link = "logit"),
                         iter = 10000,
                         warmup = 5000,
                         data = grads, 
                         seed = 111)
 
-loo(model_bayes)
+# # check model for influential points
+# loo(model_bayes4)
 
-summary(model_bayes, digits = 2)
+summary(model_bayes4, digits = 2)
 posterior_interval(
-  model_bayes,
+  model_bayes4,
   prob = 0.5)
 
-posteriors <- describe_posterior(model_bayes)
+posteriors <- describe_posterior(model_bayes4)
 # for a nicer table
 print_md(posteriors, digits = 3)
 
@@ -469,35 +443,64 @@ logit2prob <- function(logit){
 }
 
 # grad school
-logit2prob(0.033)
-logit2prob(0.033*2)
-logit2prob(0.033*3)
-logit2prob(0.033*4)
-logit2prob(0.033*5)
+logit2prob(0.022)
+logit2prob(0.022*2)
+logit2prob(0.022*3)
+logit2prob(0.022*4)
+logit2prob(0.022*5)
 
 # first gen
-logit2prob(0.972)
+logit2prob(0.902)
 # female
-logit2prob(0.431)
+logit2prob(1.213)
 # BIPOC
-logit2prob(2.103)
+logit2prob(1.971)
 # condition
-logit2prob(0.355)
+logit2prob(0.483)
 # ESL
-logit2prob(-1.574)
+logit2prob(-1.115)
 
-posterior <- as.matrix(model_bayes)
+posterior <- as.matrix(model_bayes4)
 
-plot_title <- ggtitle("Posterior distributions",
-                      "with medians and 80% intervals")
-mcmc_areas(posterior,
-           pars = c("graduate_yrs", 
-                    "firstgen", 
-                    "female",
-                    "BIPOC", 
-                    "condition", 
-                    "ESL"),
-           prob = 0.5) + plot_title
+
+covidgrad <- bayesplot::mcmc_intervals(
+  posterior,
+  pars = c(
+    "ESL",
+    "condition",
+    "BIPOC",
+    "female",
+    "firstgen",
+    "graduate_yrs"
+  ),
+  prob_outer = 0.95) +
+  #plot_title +
+  theme_bw(base_size = 16) +
+  geom_vline(
+    xintercept = 0,
+    linetype = "dotted",
+    colour = "black",
+    size = 1
+  ) +
+  scale_y_discrete(
+    labels = c(
+      'ESL',
+      'Chronic condition',
+      'BIPOC',
+      'Female',
+      'First-generation',
+      'Graduate training (yrs)'
+    )) +
+  xlab("COVID and writing habits") +
+  ylab("Parameter") +
+  theme(
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank()
+  )
+print(covidgrad)
+ggsave(covidgrad, filename = "figures/covidgrad.png", dpi = 300, width = 5, height = 5)
 
 COVIDgrads <- mcmc_intervals(posterior, pars = c("graduate_yrs", 
                                    "firstgen",
