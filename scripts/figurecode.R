@@ -14,11 +14,11 @@ library(glue)
 library(bayesplot)
 
 # load data
-survey <- read.csv('dataclean_Nov2.csv', header = TRUE)
+survey <- read.csv('data/surveydata.csv', header = TRUE)
 
 # replace empty cells with NA
-# transform all columns
-survey <- survey %>% mutate_each(funs(empty_as_na)) 
+survey[survey == ""] <- NA                     
+survey    
 
 # convert columns from character to factor
 str(survey)
