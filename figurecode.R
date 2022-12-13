@@ -16,7 +16,6 @@ library(bayesplot)
 # load data
 survey <- read.csv('dataclean_Nov2.csv', header = TRUE)
 
-
 # replace empty cells with NA
 # transform all columns
 survey <- survey %>% mutate_each(funs(empty_as_na)) 
@@ -49,87 +48,84 @@ survey$stage <- ifelse(is.na(survey$postdoc_yrs), "grad", "postdoc")
 grads <- subset(survey, is.na(survey$postdoc_yrs))
 postdocs <- subset(survey, !is.na(survey$postdoc_yrs))
 
-# career interests ----
-# make a career database
-grads2 <- gather(grads[,c(11:17)], factor_key=TRUE)
-postdocs2 <- gather(postdocs[,c(11:17)], factor_key = TRUE)
-survey2 <- gather(survey[,c(11:17)], factor_key = TRUE)
-grads2 %>% dplyr::group_by(key)%>%
-  dplyr::summarise(mean= mean(value, na.rm = TRUE), 
-            sd= sd(value,na.rm = TRUE), 
-            max = max(value, na.rm = TRUE),
-            min = min(value, na.rm = TRUE))
-
-postdocs2 %>% dplyr::group_by(key)%>%
-  dplyr::summarise(mean= mean(value, na.rm = TRUE), 
-                   sd= sd(value,na.rm = TRUE), 
-                   max = max(value, na.rm = TRUE),
-                   min = min(value, na.rm = TRUE))
-
-
-
-
-# colored by density function
-all_career <- ggplot(aes(x = value, y = key, fill = 0.5-abs(0.5-stat(ecdf))), data = survey2) +
-  stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = TRUE) +
-  scale_fill_gradientn(name = "Tail probability",
-                         colours = c("#405364","#585b74","#6c5b7b","#966480","#c6798f", "#df858e", "#eda09c"),
-                         values = c(1, 0.83, 0.66, 0.49, 0.32, 0.15, 0)) +
-  theme_classic(base_size = 16) +
-  xlim(0,10) +
-  theme(panel.border = element_rect(fill = NA, size = 1),
-        axis.line = element_blank()) +
-  #scale_fill_viridis_c(name = "Tail probability", direction = -1) +
-  ylab("Career path") +
-  xlab("Interest level") +
-  scale_y_discrete(labels = c('Teaching','R2 or R3',
-                              'R1', 'Government',
-                              'Industry or Data Science',
-                              'Communication',
-                              'NGO'))
-
-# ggsave(all_career, filename = glue("figures/career_interest_figure_{Sys.Date()}.png"), width = 7, height = 5, dpi=300)
-
-
-grad_career <- ggplot(aes(x = value, y = key, fill = 0.5-abs(0.5-stat(ecdf))), data = grads2) +
-  #geom_density_ridges(scale = 1.5, alpha = 0.7, jittered_points = FALSE) +
-  stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = TRUE) +
-  theme_classic(base_size = 14) +
-  xlim(0,10) +
-  theme(panel.border = element_rect(fill = NA, size = 1),
-        axis.line = element_blank()) +
-  scale_fill_viridis_c(name = "Tail probability", direction = -1) +
-  ylab("Career path") +
-  xlab("Interest level") +
-  theme(legend.position = "none")
-
-postdoc_career <- ggplot(aes(x = value, y = key, fill = key), data = postdocs2) +
-  geom_density_ridges(scale = 1.5, stat = "identity", alpha = 0.7, jittered_points = FALSE) +
-  theme_classic(base_size = 14) +
-  theme(panel.border = element_rect(fill = NA, size = 1),
-        axis.line = element_blank()) +
-  scale_fill_viridis_d() +
-  ylab("Career path") +
-  xlab("Interest level") +
-  theme(legend.position = "none")
-
-ggarrange(grad_career +
-            theme(axis.text.y = element_blank(),
-                  axis.ticks.y = element_blank(),
-                  axis.title.y = element_blank() ),
-          postdoc_career +
-            theme(axis.text.y = element_blank(),
-                  axis.ticks.y = element_blank(),
-                  axis.title.y = element_blank() ),
-          ncol = 2,
-          align = "hv",
-          legend = "none")
-
-
+# # career interests ----
+# # make a career database
+# grads2 <- gather(grads[,c(11:17)], factor_key=TRUE)
+# postdocs2 <- gather(postdocs[,c(11:17)], factor_key = TRUE)
+# survey2 <- gather(survey[,c(11:17)], factor_key = TRUE)
+# grads2 %>% dplyr::group_by(key)%>%
+#   dplyr::summarise(mean= mean(value, na.rm = TRUE), 
+#             sd= sd(value,na.rm = TRUE), 
+#             max = max(value, na.rm = TRUE),
+#             min = min(value, na.rm = TRUE))
+# 
+# postdocs2 %>% dplyr::group_by(key)%>%
+#   dplyr::summarise(mean= mean(value, na.rm = TRUE), 
+#                    sd= sd(value,na.rm = TRUE), 
+#                    max = max(value, na.rm = TRUE),
+#                    min = min(value, na.rm = TRUE))
+# 
+# 
+# 
+# 
+# # colored by density function
+# all_career <- ggplot(aes(x = value, y = key, fill = 0.5-abs(0.5-stat(ecdf))), data = survey2) +
+#   stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = TRUE) +
+#   scale_fill_gradientn(name = "Tail probability",
+#                          colours = c("#405364","#585b74","#6c5b7b","#966480","#c6798f", "#df858e", "#eda09c"),
+#                          values = c(1, 0.83, 0.66, 0.49, 0.32, 0.15, 0)) +
+#   theme_classic(base_size = 16) +
+#   xlim(0,10) +
+#   theme(panel.border = element_rect(fill = NA, size = 1),
+#         axis.line = element_blank()) +
+#   #scale_fill_viridis_c(name = "Tail probability", direction = -1) +
+#   ylab("Career path") +
+#   xlab("Interest level") +
+#   scale_y_discrete(labels = c('Teaching','R2 or R3',
+#                               'R1', 'Government',
+#                               'Industry or Data Science',
+#                               'Communication',
+#                               'NGO'))
+# 
+# # ggsave(all_career, filename = glue("figures/career_interest_figure_{Sys.Date()}.png"), width = 7, height = 5, dpi=300)
+# 
+# 
+# grad_career <- ggplot(aes(x = value, y = key, fill = 0.5-abs(0.5-stat(ecdf))), data = grads2) +
+#   #geom_density_ridges(scale = 1.5, alpha = 0.7, jittered_points = FALSE) +
+#   stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = TRUE) +
+#   theme_classic(base_size = 14) +
+#   xlim(0,10) +
+#   theme(panel.border = element_rect(fill = NA, size = 1),
+#         axis.line = element_blank()) +
+#   scale_fill_viridis_c(name = "Tail probability", direction = -1) +
+#   ylab("Career path") +
+#   xlab("Interest level") +
+#   theme(legend.position = "none")
+# 
+# postdoc_career <- ggplot(aes(x = value, y = key, fill = key), data = postdocs2) +
+#   geom_density_ridges(scale = 1.5, stat = "identity", alpha = 0.7, jittered_points = FALSE) +
+#   theme_classic(base_size = 14) +
+#   theme(panel.border = element_rect(fill = NA, size = 1),
+#         axis.line = element_blank()) +
+#   scale_fill_viridis_d() +
+#   ylab("Career path") +
+#   xlab("Interest level") +
+#   theme(legend.position = "none")
+# 
+# ggarrange(grad_career +
+#             theme(axis.text.y = element_blank(),
+#                   axis.ticks.y = element_blank(),
+#                   axis.title.y = element_blank() ),
+#           postdoc_career +
+#             theme(axis.text.y = element_blank(),
+#                   axis.ticks.y = element_blank(),
+#                   axis.title.y = element_blank() ),
+#           ncol = 2,
+#           align = "hv",
+#           legend = "none")
 
 
-
-# identity ----
+# demographic information ----
 survey %>%
   group_by(stage) %>%
   summarize(avgfirst = mean(firstauthor_pubs, na.rm = TRUE),
@@ -201,39 +197,28 @@ ggsave(filename = "figures/firstandcopubs.png", dpi = 300, height = 8, width = 8
 
 
 
-# linear models comparing pubs vs. total training ----
-summary(lm(pubtotal ~ trainingtot, data = survey))
-summary(lm(firstauthor_pubs ~ trainingtot, data = survey))
-summary(lm(coauthor_pubs ~ trainingtot, data = survey))
+# # linear models comparing pubs vs. total training ----
+# summary(lm(pubtotal ~ trainingtot, data = survey))
+# summary(lm(firstauthor_pubs ~ trainingtot, data = survey))
+# summary(lm(coauthor_pubs ~ trainingtot, data = survey))
+# 
+# # linear models comparing pubs vs. grad + postdoc ----
+# # maybe analyze postdocs and grads separately?
+# # for those with postdoc experience, grad yrs didn't matter
+# summary(lm(pubtotal ~ graduate_yrs + postdoc_yrs, data = survey))
+# summary(lm(firstauthor_pubs ~ graduate_yrs + postdoc_yrs, data = survey))
+# summary(lm(coauthor_pubs ~ graduate_yrs + postdoc_yrs, data = survey))
+# 
+# # linear models comparing pubs vs. grad training ----
+# summary(lm(pubtotal ~ graduate_yrs, data = survey))
+# summary(lm(firstauthor_pubs ~ graduate_yrs, data = survey))
+# summary(lm(coauthor_pubs ~ graduate_yrs, data = survey))
+# 
+# # linear models comparing pubs vs. postdoc training ----
+# summary(lm(pubtotal ~ postdoc_yrs, data = survey))
+# summary(lm(firstauthor_pubs ~ postdoc_yrs, data = survey))
+# summary(lm(coauthor_pubs ~ postdoc_yrs, data = survey))
 
-# linear models comparing pubs vs. grad + postdoc ----
-# maybe analyze postdocs and grads separately?
-# for those with postdoc experience, grad yrs didn't matter
-summary(lm(pubtotal ~ graduate_yrs + postdoc_yrs, data = survey))
-summary(lm(firstauthor_pubs ~ graduate_yrs + postdoc_yrs, data = survey))
-summary(lm(coauthor_pubs ~ graduate_yrs + postdoc_yrs, data = survey))
-
-# linear models comparing pubs vs. grad training ----
-summary(lm(pubtotal ~ graduate_yrs, data = survey))
-summary(lm(firstauthor_pubs ~ graduate_yrs, data = survey))
-summary(lm(coauthor_pubs ~ graduate_yrs, data = survey))
-
-# linear models comparing pubs vs. postdoc training ----
-summary(lm(pubtotal ~ postdoc_yrs, data = survey))
-summary(lm(firstauthor_pubs ~ postdoc_yrs, data = survey))
-summary(lm(coauthor_pubs ~ postdoc_yrs, data = survey))
-
-# # for grads, only yrs in graduate school matters
-# # same for first and co-author pubs separately
-# summary(lm(pubtotal ~
-#              graduate_yrs +
-#              first_gen +
-#              gender_identity +
-#              BIPOC +
-#              condition +
-#              first_language_english +
-#              hrs_wk_writing, 
-#            data = grads), na.rm = TRUE)
 
 # grads and postdocs vs. identity in publishing ----
 # Bayesian model for graduate students only
@@ -339,11 +324,6 @@ ggsave(multreg_plot, filename = "figures/postdocmulti.png", dpi = 300, width = 5
 # postdoc multiple regression
 
 posterior2 <- as.matrix(model_bayes2)
-
-label_wrap <- function(variable, value) {
-  lapply(strwrap(as.character(value), width=10, simplify=FALSE), 
-         paste, collapse="\n")
-}
 
 multreggrad_plot <- bayesplot::mcmc_intervals(
   posterior2,
