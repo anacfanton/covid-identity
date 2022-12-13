@@ -526,20 +526,20 @@ logit2prob <- function(logit){
 }
 
 # postdoc years
-logit2prob(0.269)
-logit2prob(0.269*2)
-logit2prob(0.269*3)
-logit2prob(0.269*4)
+logit2prob(0.286)
+logit2prob(0.286*2)
+logit2prob(0.286*3)
+logit2prob(0.286*4)
 # first gen
 logit2prob(0.39)
 # female
-logit2prob(0.693)
+logit2prob(0.903)
 # BIPOC
-logit2prob(0.528)
+logit2prob(0.429)
 # condition
-logit2prob(-1.222)
+logit2prob(-1.311)
 # ESL
-logit2prob(-1.369)
+logit2prob(-1.277)
 
 ## make figure
 posterior <- as.matrix(model_bayes5)
