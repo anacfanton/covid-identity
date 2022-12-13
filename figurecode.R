@@ -11,6 +11,7 @@ library(easystats)
 library(tidyr)
 library(ggridges)
 library(glue)
+library(bayesplot)
 
 # load data
 survey <- read.csv('dataclean_Nov2.csv', header = TRUE)
@@ -96,7 +97,7 @@ all_career <- ggplot(aes(x = value, y = key, fill = 0.5-abs(0.5-stat(ecdf))), da
                               'Communication',
                               'NGO'))
 
-ggsave(all_career, filename = glue("figures/career_interest_figure_{Sys.Date()}.png"), width = 7, height = 5, dpi=300)
+# ggsave(all_career, filename = glue("figures/career_interest_figure_{Sys.Date()}.png"), width = 7, height = 5, dpi=300)
 
 
 grad_career <- ggplot(aes(x = value, y = key, fill = 0.5-abs(0.5-stat(ecdf))), data = grads2) +
@@ -181,43 +182,21 @@ first_author <- ggplot(aes(x = firstauthor_pubs, fill = stage), data = survey) +
   theme_classic(base_size = 14) +
   theme(panel.border = element_rect(fill = NA, size = 1),
         axis.line = element_blank()) +
-  scale_fill_viridis_d() +
+  scale_fill_viridis_d(begin = 0.2, end = 0.8) +
   xlab("Density") +
   xlab("First-authored publications") +
   xlim(c(0,20))
-
-first_author_v2 <- survey %>%
-  ggplot( aes(x=firstauthor_pubs, fill=stage)) +
-  geom_histogram( color="#e9ecef", alpha=0.6, position = 'identity') +
-  scale_fill_manual(values=c("#69b3a2", "#404080")) +
-  theme_classic(base_size = 14) +
-  theme(panel.border = element_rect(fill = NA, size = 1),
-        axis.line = element_blank()) +
-  labs(fill="") +
-  xlim(c(0,20)) +
-  xlab("first-authored publications")
 
 
 co_author <- ggplot(aes(x = coauthor_pubs, fill = stage), data = survey) +
   geom_density(alpha = 0.2) + theme_bw(base_size = 14) +
   xlab("Density") +
-  scale_fill_viridis_d() +
+  scale_fill_viridis_d(begin = 0.2, end = 0.8) +
   theme_classic(base_size = 14) +
   theme(panel.border = element_rect(fill = NA, size = 1),
         axis.line = element_blank()) +
   xlab("Co-authored publications") +
   xlim(c(0,20))
-
-co_author_v2 <- survey %>%
-  ggplot(aes(x = coauthor_pubs, fill = stage)) +
-  geom_histogram(color = "#e9ecef",
-                 alpha = 0.6,
-                 position = 'identity') +
-  scale_fill_manual(values = c("#69b3a2", "#404080")) +
-  theme_bw(base_size = 12) +
-  labs(fill = "") +
-  xlim(c(0, 20)) +
-  xlab("co-authored publications")
 
 ggarrange(labels = "AUTO",
           align = "hv",
@@ -227,7 +206,7 @@ ggarrange(labels = "AUTO",
           nrow=2, 
           common.legend = TRUE, 
           legend="bottom")
-
+ggsave(filename = "figures/firstandcopubs.png", dpi = 300, height = 8, width = 8)
 
 
 
@@ -253,97 +232,166 @@ summary(lm(pubtotal ~ postdoc_yrs, data = survey))
 summary(lm(firstauthor_pubs ~ postdoc_yrs, data = survey))
 summary(lm(coauthor_pubs ~ postdoc_yrs, data = survey))
 
-# for grads, only yrs in graduate school matters
-# same for first and co-author pubs separately
-summary(lm(pubtotal ~
-             graduate_yrs +
-             first_gen +
-             gender_identity +
-             BIPOC +
-             condition +
-             first_language_english +
-             hrs_wk_writing, 
-           data = grads), na.rm = TRUE)
+# # for grads, only yrs in graduate school matters
+# # same for first and co-author pubs separately
+# summary(lm(pubtotal ~
+#              graduate_yrs +
+#              first_gen +
+#              gender_identity +
+#              BIPOC +
+#              condition +
+#              first_language_english +
+#              hrs_wk_writing, 
+#            data = grads), na.rm = TRUE)
 
 # grads and postdocs vs. identity in publishing
-
-model_bayes2 <- stan_glm(pubtotal ~ 
-                          graduate_yrs +
-                          firstgen +
-                          female +
-                          BIPOC +
-                          condition +
-                          ESL +
-                          hrs_wk_writing, 
-                        iter = 10000,
-                        cores = 3,
-                        chains = 4,
-                        warmup = 5000,
-                        data= grads, seed=111)
+# Bayesian model
+model_bayes2 <- stan_glm(
+  pubtotal ~
+    graduate_yrs +
+    firstgen +
+    female +
+    BIPOC +
+    condition +
+    ESL +
+    hrs_wk_writing,
+  iter = 10000,
+  cores = 3,
+  chains = 4,
+  warmup = 5000,
+  data = grads,
+  seed = 111
+)
 
 summary(model_bayes2)
 
-model_bayes <- stan_glm(pubtotal ~ 
-                          graduate_yrs +
-                          postdoc_yrs +
-                          firstgen +
-                          female +
-                          BIPOC +
-                          condition +
-                          ESL 
-                        iter = 10000,
-                        cores = 3,
-                        chains = 4,
-                        warmup = 5000,
-                        data = postdocs, seed=111)
+model_bayes <- stan_glm(
+  pubtotal ~
+    graduate_yrs +
+    postdoc_yrs +
+    firstgen +
+    female +
+    BIPOC +
+    condition +
+    ESL,
+  iter = 10000,
+  cores = 3,
+  chains = 4,
+  warmup = 5000,
+  data = postdocs,
+  seed = 111
+)
 
-loo(model_bayes)
+# model summaries
 summary(model_bayes, digits = 3)
 posterior_interval(
   model_bayes,
   prob = 0.9)
 
+
+# check for influential points
+loo(model_bayes)
+
+
 # for all data combined how does writing time relate to pub total
 model_bayes3 <- stan_glm(hrs_wk_writing ~ trainingtot, data = survey)
 
-model_bayes3 <- stan_glm(pubtotal ~ 
-                           #graduate_yrs +
-                           #postdoc_yrs +
-                           firstgen +
-                           female +
-                           BIPOC +
-                           condition +
-                           ESL +
-                           hrs_wk_writing, 
-                         iter = 10000,
-                         cores = 3,
-                         chains = 4,
-                         warmup = 5000,
-                         data= survey, seed=111)
+model_bayes3 <- stan_glm(
+  pubtotal ~
+    graduate_yrs +
+    postdoc_yrs +
+    firstgen +
+    female +
+    BIPOC +
+    condition +
+    ESL +
+    hrs_wk_writing,
+  iter = 10000,
+  cores = 3,
+  chains = 4,
+  warmup = 5000,
+  data = survey,
+  seed = 111
+)
 
 posteriors <- describe_posterior(model_bayes3)
 # for a nicer table
 print_md(posteriors, digits = 3)
 
-plot_title <- ggtitle("Posterior distributions",
-                      "with medians and 80% intervals")
-mcmc_areas(posterior,
-           pars = c("graduate_yrs",
-                    "postdoc_yrs",
-                    "firstgen", 
-                    "female",
-                    "BIPOC", 
-                    "condition", 
-                    "ESL"),
-           prob = 0.5) + plot_title
+# posterior plots for multiple regressions
+color_scheme_set("darkgray")
 
-mcmc_intervals(posterior, pars = c("graduate_yrs",
-                                   "postdoc_yrs",
-                                   "firstgen",
-                                   "female",
-                                   "BIPOC",
-                                   "condition",
-                                   "ESL"))
+# postdoc multiple regression
+posteriors <- describe_posterior(model_bayes)
+# for a nicer table
+print_md(posteriors, digits = 3)
+
+multreg_plot <- mcmc_intervals(
+  posterior,
+  pars = c(
+    "ESL",
+    "condition",
+    "BIPOC",
+    "female",
+    "firstgen",
+    "postdoc_yrs",
+    "graduate_yrs"
+),
+    prob_outer = 0.95) +
+    #plot_title +
+    theme_bw(base_size = 16) +
+    geom_vline(
+      xintercept = 0,
+      linetype = "dotted",
+      colour = "black",
+      size = 1
+    ) +
+    scale_y_discrete(
+      labels = c(
+        'ESL',
+        'Chronic condition',
+        'BIPOC',
+        'Female-identifying',
+        'First generation college',
+        'Postdoc training (yrs)',
+        'Graduate training (yrs)'
+      )
+    ) +
+    xlab("Effect on total publications") +
+    ylab("Parameter") +
+    theme(
+      panel.grid.major.y = element_blank(),
+      panel.grid.minor.y = element_blank(),
+      panel.grid.major.x = element_blank(),
+      panel.grid.minor.x = element_blank()
+    )
+print(multreg_plot)
+
+
+
+
+mcmc_areas(posterior,
+           pars = c("ESL",
+                    "condition", 
+                    "BIPOC", 
+                    "female",
+                    "firstgen", 
+                    "postdoc_yrs",
+                    "graduate_yrs"),
+           prob = 0.95)
+
+mcmc_intervals(
+  posterior,
+  pars = c(
+    "graduate_yrs",
+    "postdoc_yrs",
+    "firstgen",
+    "female",
+    "BIPOC",
+    "condition",
+    "ESL"
+  )
+)
                   
 
 summary(model_bayes, digits = 2)
