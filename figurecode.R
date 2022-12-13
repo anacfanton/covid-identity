@@ -235,8 +235,8 @@ summary(lm(coauthor_pubs ~ postdoc_yrs, data = survey))
 #              hrs_wk_writing, 
 #            data = grads), na.rm = TRUE)
 
-# grads and postdocs vs. identity in publishing
-# Bayesian model
+# grads and postdocs vs. identity in publishing ----
+# Bayesian model for graduate students only
 model_bayes2 <- stan_glm(
   pubtotal ~
     graduate_yrs +
@@ -244,8 +244,7 @@ model_bayes2 <- stan_glm(
     female +
     BIPOC +
     condition +
-    ESL +
-    hrs_wk_writing,
+    ESL,
   iter = 10000,
   cores = 3,
   chains = 4,
@@ -256,6 +255,7 @@ model_bayes2 <- stan_glm(
 
 summary(model_bayes2)
 
+# Bayesian model for postdocs only
 model_bayes <- stan_glm(
   pubtotal ~
     graduate_yrs +
@@ -280,39 +280,15 @@ posterior_interval(
   prob = 0.9)
 
 
-# check for influential points
-loo(model_bayes)
+# # check models for influential points using 'loo'
+# loo(model_bayes)
 
 
-# for all data combined how does writing time relate to pub total
-model_bayes3 <- stan_glm(hrs_wk_writing ~ trainingtot, data = survey)
 
-model_bayes3 <- stan_glm(
-  pubtotal ~
-    graduate_yrs +
-    postdoc_yrs +
-    firstgen +
-    female +
-    BIPOC +
-    condition +
-    ESL +
-    hrs_wk_writing,
-  iter = 10000,
-  cores = 3,
-  chains = 4,
-  warmup = 5000,
-  data = survey,
-  seed = 111
-)
-
-posteriors <- describe_posterior(model_bayes3)
-# for a nicer table
-print_md(posteriors, digits = 3)
-
-# posterior plots for multiple regressions
+#### posterior plots for multiple regressions ----
 color_scheme_set("darkgray")
 
-# postdoc multiple regression
+## postdoc multiple regression
 posteriors <- describe_posterior(model_bayes)
 # for a nicer table
 print_md(posteriors, digits = 3)
@@ -357,33 +333,68 @@ multreg_plot <- mcmc_intervals(
       panel.grid.minor.x = element_blank()
     )
 print(multreg_plot)
+ggsave(multreg_plot, filename = "figures/postdocmulti.png", dpi = 300, width = 5, height = 5)
 
+## grad multiple regression
+# postdoc multiple regression
 
+posterior2 <- as.matrix(model_bayes2)
 
-
-mcmc_areas(posterior,
-           pars = c("ESL",
-                    "condition", 
-                    "BIPOC", 
-                    "female",
-                    "firstgen", 
-                    "postdoc_yrs",
-                    "graduate_yrs"),
-           prob = 0.95)
-
-mcmc_intervals(
-  posterior,
+multreggrad_plot <- bayesplot::mcmc_intervals(
+  posterior2,
   pars = c(
-    "graduate_yrs",
-    "postdoc_yrs",
-    "firstgen",
-    "female",
-    "BIPOC",
+    "ESL",
     "condition",
-    "ESL"
+    "BIPOC",
+    "female",
+    "firstgen",
+    "graduate_yrs"
+  ),
+  prob_outer = 0.95) +
+  #plot_title +
+  theme_bw(base_size = 16) +
+  geom_vline(
+    xintercept = 0,
+    linetype = "dotted",
+    colour = "black",
+    size = 1
+  ) +
+  scale_y_discrete(
+    labels = c(
+      'ESL',
+      'Chronic condition',
+      'BIPOC',
+      'Female-identifying',
+      'First generation college',
+      'Graduate training (yrs)'
+    )) +
+  xlab("Effect on total publications") +
+  ylab("Parameter") +
+  theme(
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank()
   )
+print(multreggrad_plot)
+ggsave(filename = "figures/gradmulti.png", dpi = 300, width = 5, height = 5)
+
+
+## make side-by-side
+
+
+identitymulti <- ggarrange(
+  multreggrad_plot,
+  multreg_plot,
+  ncol = 2,
+  nrow = 1,
+  align = "hv",
+  labels = "AUTO",
+  font.label = list(color = "black", size = 14)
 )
-                  
+
+print(identitymulti) 
+ggsave(filename = "figures/identitymulti.png", dpi = 300, height = 8, width = 12)
 
 summary(model_bayes, digits = 2)
 posteriors <- describe_posterior(model_bayes)
