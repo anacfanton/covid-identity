@@ -239,6 +239,10 @@ model_bayes2 <- stan_glm(
 )
 
 summary(model_bayes2)
+## postdoc multiple regression
+posteriors <- describe_posterior(model_bayes2)
+# for a nicer table
+print_md(posteriors, digits = 3)
 
 # Bayesian model for postdocs only
 model_bayes <- stan_glm(
@@ -263,7 +267,9 @@ summary(model_bayes, digits = 3)
 posterior_interval(
   model_bayes,
   prob = 0.9)
-
+posteriors <- describe_posterior(model_bayes)
+# for a nicer table
+print_md(posteriors, digits = 3)
 
 # # check models for influential points using 'loo'
 # loo(model_bayes)
@@ -565,7 +571,7 @@ covidpostdoc <- bayesplot::mcmc_intervals(
       'BIPOC',
       'Female',
       'First-generation',
-      'Postdoctoral training (yrs)'
+      'Postdoc training (yrs)'
     )) +
   xlab("COVID and writing habits") +
   ylab("Parameter") +
