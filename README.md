@@ -27,7 +27,8 @@ Contains all survey data (will be archived on Dryad upon acceptance)
 
 #### (2) Code
 Contains all R code used to run models in the paper.
-- **[scripts/figurecode.R](scripts/figurecode.R)** Includes all model and figure code used in the manuscript
+- **[scripts/figurecode.R](scripts/figurecode.R)** Includes all model and figure 1 & 3 code used in the manuscript
+- **[scripts/Fig2code.R](scripts/Fig2code.R)** Includes all code for creating figure 2 in the manuscript
 - **[covid-identity.Rproj](covid-identity.Rproj)** R project associated with data and script
 
 #### (3) Figures
