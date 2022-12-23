@@ -1,4 +1,4 @@
-# Script for figures and analysis
+# Script for figures 1 & 3 and analysis
 # Written by FER
 # Last update December 2022
 
