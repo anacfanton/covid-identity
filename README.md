@@ -23,9 +23,9 @@ Upon acceptance, this repository will be archived and issued a DOI via Zenodo
 
 #### (1) Data
 Contains all survey data (will be archived on Dryad upon acceptance)
-- **[data/surveydata.csv](surveydata.csv)** Temp file with all survey data (note: not the final version for data publication)
+- **[data/surveydata.csv](data/surveydata.csv)** Temp file with all survey data (note: not the final version for data publication)
 
 #### (2) Code
 Contains all R code used to run models in the paper.
-- **[scripts/figurecode.R](figurecode.R)** Includes all model and figure code used in the manuscript
+- **[scripts/figurecode.R](scripts/figurecode.R)** Includes all model and figure code used in the manuscript
 - **[covid-identity.Rproj](covid-identity.Rproj)** R project associated with data and script
