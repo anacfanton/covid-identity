@@ -18,8 +18,14 @@ Upon acceptance, this repository will be archived and issued a DOI via Zenodo
 <sup>4</sup>Current address: Institut National de Recherche pour l’Agriculture, l’Alimentation et l’Environnement (INRAE), Villenave d’Ornon, France
 *These authors contributed equally to the work
 
-## More details about files
 
-- **dataclean_Nov2.csv** Most recent all data file (note: not the final version for data publication
-- **figurecode.R** Contains all the figure and statistics code for manuscript
-- **covid-identity.Rproj** R project associated with this project
+## Contents
+
+#### (1) Data
+Contains all survey data (will be archived on Dryad upon acceptance)
+- **[data/surveydata.csv](surveydata.csv)** Temp file with all survey data (note: not the final version for data publication)
+
+#### (2) Code
+Contains all R code used to run models in the paper.
+- **[scripts/figurecode.R](figurecode.R)** Includes all model and figure code used in the manuscript
+- **[covid-identity.Rproj](covid-identity.Rproj)** R project associated with data and script
