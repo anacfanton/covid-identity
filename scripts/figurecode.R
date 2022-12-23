@@ -1,3 +1,7 @@
+# Script for figures and analysis
+# Written by FER
+# Last update December 2022
+
 # libraries
 library(ggplot2) 
 library(viridis)
@@ -125,6 +129,7 @@ postdocs <- subset(survey, !is.na(survey$postdoc_yrs))
 #           legend = "none")
 
 
+
 # demographic information ----
 survey %>%
   group_by(stage) %>%
@@ -197,27 +202,32 @@ ggsave(filename = "figures/firstandcopubs.png", dpi = 300, height = 8, width = 8
 
 
 
-# # linear models comparing pubs vs. total training ----
+
+# graph of relationship total pubs and total training ----
+# ## this is why we need to account for this. 
+# linpubs <- ggplot(aes(x = trainingtot, y = pubtotal), data = survey) +
+#   geom_point(aes(size = postdoc_yrs), alpha = 0.5) +
+#   scale_fill_viridis() +
+#   theme_bw(base_size = 14) +
+#   xlab("Total yrs as trainee (grad + postdoc)") +
+#   ylab("Total publications")
+
 # summary(lm(pubtotal ~ trainingtot, data = survey))
+# summary(lm(pubtotal ~ trainingtot, data = grads))
+# summary(lm(pubtotal ~ trainingtot, data = postdocs))
+# cor(survey$pubtotal, survey$trainingtot, method = "pearson")
+# cor(survey$pubtotal, survey$trainingtot, method = "spearman")
+
+
+# relationship first author pubs and total training 
+# linpubs <- ggplot(aes(x = trainingtot, y = firstauthor_pubs), data = survey) +
+#   geom_point(pch = 21, aes(size = postdoc_yrs, fill = postdoc_yrs), alpha = 0.5) +
+#   scale_fill_viridis() +
+#   theme_bw(base_size = 14) +
+#   xlab("Total yrs as trainee (grad + postdoc)") +
+#   ylab("First-author publications")
+# 
 # summary(lm(firstauthor_pubs ~ trainingtot, data = survey))
-# summary(lm(coauthor_pubs ~ trainingtot, data = survey))
-# 
-# # linear models comparing pubs vs. grad + postdoc ----
-# # maybe analyze postdocs and grads separately?
-# # for those with postdoc experience, grad yrs didn't matter
-# summary(lm(pubtotal ~ graduate_yrs + postdoc_yrs, data = survey))
-# summary(lm(firstauthor_pubs ~ graduate_yrs + postdoc_yrs, data = survey))
-# summary(lm(coauthor_pubs ~ graduate_yrs + postdoc_yrs, data = survey))
-# 
-# # linear models comparing pubs vs. grad training ----
-# summary(lm(pubtotal ~ graduate_yrs, data = survey))
-# summary(lm(firstauthor_pubs ~ graduate_yrs, data = survey))
-# summary(lm(coauthor_pubs ~ graduate_yrs, data = survey))
-# 
-# # linear models comparing pubs vs. postdoc training ----
-# summary(lm(pubtotal ~ postdoc_yrs, data = survey))
-# summary(lm(firstauthor_pubs ~ postdoc_yrs, data = survey))
-# summary(lm(coauthor_pubs ~ postdoc_yrs, data = survey))
 
 
 # grads and postdocs vs. identity in publishing ----
@@ -391,7 +401,7 @@ ggsave(filename = "figures/identitymulti.png", dpi = 300, height = 8, width = 12
 
 # relationship between COVID and identity ----
 
-# grad students ----
+# grad students and COVID ----
 # recode yes and no
 grads$COVIDimpact <- ifelse(grads$COVID_impact_writing == "Yes", 1, 0)
 grads$female <- ifelse(grads$male == 1, 0, 1)
@@ -490,7 +500,7 @@ ggsave(covidgrad, filename = "figures/covidgrad.png", dpi = 300, width = 5, heig
 
 
 
-# postdocs ----
+# postdocs and COVID ----
 # recode yes and no
 postdocs$COVIDimpact <- ifelse(postdocs$COVID_impact_writing == "Yes", 1, 0)
 postdocs$female <- ifelse(postdocs$male == 1, 0, 1)
@@ -584,27 +594,3 @@ covidpostdoc <- bayesplot::mcmc_intervals(
 print(covidpostdoc)
 ggsave(covidpostdoc, filename = "figures/covidpostdoc.png", dpi = 300, width = 5, height = 5)
 
-# graph of relationship total pubs and total training ----
-# ## this is why we need to account for this. 
-# linpubs <- ggplot(aes(x = trainingtot, y = pubtotal), data = survey) +
-#   geom_point(aes(size = postdoc_yrs), alpha = 0.5) +
-#   scale_fill_viridis() +
-#   theme_bw(base_size = 14) +
-#   xlab("Total yrs as trainee (grad + postdoc)") +
-#   ylab("Total publications")
-
-# summary(lm(pubtotal ~ trainingtot, data = survey))
-# summary(lm(pubtotal ~ trainingtot, data = grads))
-# summary(lm(pubtotal ~ trainingtot, data = postdocs))
-# cor(survey$pubtotal, survey$trainingtot, method = "pearson")
-# cor(survey$pubtotal, survey$trainingtot, method = "spearman")
-
-# # relationship first author pubs and total training ----
-# linpubs <- ggplot(aes(x = trainingtot, y = firstauthor_pubs), data = survey) +
-#   geom_point(pch = 21, aes(size = postdoc_yrs, fill = postdoc_yrs), alpha = 0.5) +
-#   scale_fill_viridis() +
-#   theme_bw(base_size = 14) +
-#   xlab("Total yrs as trainee (grad + postdoc)") +
-#   ylab("First-author publications")
-# 
-# summary(lm(firstauthor_pubs ~ trainingtot, data = survey))
