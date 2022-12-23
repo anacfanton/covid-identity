@@ -1,12 +1,12 @@
-# Repository for COVID and identity trainee manuscript
+# Code for manuscript "Overemphasis on publications may disadvantage historically excluded groups in academia before and during COVID-19"
 
-## Collaborators
-- Kyra Prats
-- Freya Rowland
-- Yara Alshwairikh
-- Mary Burak
-- Ana Fanton
-- Marlyse Duguid
+## Authors
+- Freya E. Rowland
+- Kyra A. Prats
+- Yara A. Alshwairikh
+- Mary K. Burak
+- Ana Clara Fanton
+- Marlyse C. Duguid
 
 ## More details about files
 
