@@ -1,6 +1,8 @@
+# Code for producing figure 2
+# Written by KAP
+# Last edit December 2022
 
-setwd("/Users/kyraprats/Documents/Yale PhD/Writing Collab")
-
+# libraries
 library(ggplot2)
 library(viridis)
 library(RColorBrewer)
@@ -9,9 +11,11 @@ library(tm)
 library(dplyr)
 library(ggpubr)
 library(cowplot)
+library(wordcloud2)
 
-covid <- read.csv('CovidBarrierSummaryData.csv', header = TRUE)
-
+# load data
+# subsetted survey based on COVID questions
+# covid <- read.csv('CovidBarrierSummaryData.csv', header = TRUE)
 
 
 # Subset based on the question numbers from the survey (27, 28, 31, 32), excluding NAs
@@ -42,6 +46,7 @@ covid1 <-
         axis.text.x = element_text(size=14), axis.text.y = element_text(size=14),
         axis.title.x = element_text(size=14), axis.title.y = element_text(size=14))
 covid1
+
 # B
 positions28 <- c("Much less time", "Less time", "No change", "More time", "Much more time")
 covid2 <-
@@ -62,6 +67,7 @@ covid2 <-
         axis.text.x = element_text(size=14), axis.text.y = element_text(size=14),
         axis.title.x = element_text(size=14), axis.title.y = element_text(size=14))
 covid2
+
 # C
 positions29 <- c("Much less productive", "Less productive", "No change", 
                  "More productive", "Much more productive")
@@ -83,6 +89,7 @@ covid3 <-
         axis.text.x = element_text(size=14), axis.text.y = element_text(size=14),
         axis.title.x = element_text(size=14), axis.title.y = element_text(size=14))
 covid3
+
 # D
 positions30 <- c("Much less motivated", "Less motivated", "No change", 
                  "More motivated", "Much more motivated")
