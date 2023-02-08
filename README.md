@@ -33,4 +33,4 @@ Contains all R code used to run models in the paper.
 
 #### (3) Figures
 Copies of figures associated with the manuscript
-- **[figures/]** Includes figures used in this manuscript
+- **[figures/](figures/)** Includes figures used in this manuscript
