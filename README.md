@@ -22,8 +22,8 @@ Upon acceptance, this repository will be archived and issued a DOI via Zenodo. F
 ## Contents
 
 #### (1) Data
-Contains all survey data (will be archived on Dryad upon acceptance)
-- **[data/surveydata.csv](data/surveydata.csv)** Temp file with all survey data (note: not the final version for data publication)
+Contains all survey data (archived with metadata on Dryad at https://doi.org/10.5061/dryad.fqz612jwn)
+- **[data/surveydata.csv](data/surveydata.csv)** 
 
 #### (2) Code
 Contains all R code used to run models in the paper.
