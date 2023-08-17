@@ -2,7 +2,7 @@
 
 Code and data for "_Overemphasis on publications may disadvantage historically excluded groups in STEM before and during COVID-19: a North American survey study_", in review at PLOS One
 
-Upon acceptance, this repository will be archived and issued a DOI via Zenodo. Full data available on Dryad at https://doi.org/10.5061/dryad.fqz612jwn
+Full data available on Dryad at https://doi.org/10.5061/dryad.fqz612jwn
 
 ## Authors
 - Freya E. Rowland<sup>1,2*</sup>
