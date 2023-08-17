@@ -4,7 +4,7 @@ Code and data for "_Overemphasis on publications may disadvantage historically e
 
 Full data available on Dryad at https://doi.org/10.5061/dryad.fqz612jwn
 
-Code is archived on Zenodo (latest publication date: August 17, 2023). DOI: 10.5281/zenodo.8256672
+Code is archived on Zenodo (latest publication date: August 17, 2023). DOI: **10.5281/zenodo.8256672**
 
 ## Authors
 - Freya E. Rowland<sup>1,2*</sup>
